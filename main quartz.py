@@ -67,13 +67,13 @@ class ClipboardManager:
         # self.listener = hotkeys
         # self.listener.start()
         
-        # self.listener = keyboard.Listener(on_press=self.on_press, on_release=self.on_release)
-        # self.listener.start()
+        self.listener = keyboard.Listener(on_press=self.on_press, on_release=self.on_release)
+        self.listener.start()
         event_tap = Quartz.CGEventTapCreate(
             Quartz.kCGSessionEventTap,
             Quartz.kCGHeadInsertEventTap,
             Quartz.kCGEventTapOptionDefault,
-            Quartz.CGEventMaskBit(Quartz.kCGEventKeyDown),
+            Quartz.CGEventMaskBit(Quartz.kCGEventKeyUp),
             self.callback_proxy,
             None
         )
@@ -89,14 +89,20 @@ class ClipboardManager:
             Quartz.kCFRunLoopCommonModes
         )
         Quartz.CGEventTapEnable(event_tap, True)
-    
+
+        print("Listening for Cmd + V events...")
+
     def callback_proxy(self,proxy, event_type, event, refcon):
-        if event_type == Quartz.kCGEventKeyDown:
-            # Command + V 조합 감지
-            cmd_key_down = event.flags() & Quartz.kCGEventFlagMaskCommand
-            v_key_down = event.getIntegerValueField(Quartz.kCGKeyboardEventKeycode) == 9
-            print("새 로그",cmd_key_down,v_key_down)
+        global paste_triggered
+
+        if event_type == Quartz.kCGEventKeyUp:
+            # Command 키가 눌려 있는지 확인
+            cmd_key_down = Quartz.CGEventGetFlags(event) & Quartz.kCGEventFlagMaskCommand
+            # V 키가 눌렸는지 확인 (V key code = 9)
+            v_key_down = Quartz.CGEventGetIntegerValueField(event, Quartz.kCGKeyboardEventKeycode) == 9
+
             if cmd_key_down and v_key_down:
+                print("Cmd + V 감지!")
                 self.handle_paste()
 
         return event
@@ -115,8 +121,8 @@ class ClipboardManager:
                 self.cmd_pressed = True
             elif char == 'v':
                 self.v_pressed = True
-                if self.cmd_pressed:
-                    self.handle_paste()
+                # if self.cmd_pressed:
+                #     self.handle_paste()
             elif original_key == keyboard.Key.alt:
                 self.alt_pressed = True
                 
