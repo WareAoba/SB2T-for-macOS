@@ -3,7 +3,7 @@
 =============
 
 
-[식붕이툴](https://github.com/JOWONRO/SB2Tool) , "SB2Tool")이 윈도우에서밖에 안 된다는 점이
+[식붕이툴](https://github.com/JOWONRO/SB2Tool , "SB2Tool")이 윈도우에서밖에 안 된다는 점이
 너무나 한이 맺혀
 직접 개발해보려고 합니다.
 
