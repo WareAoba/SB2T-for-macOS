@@ -1,5 +1,4 @@
 import Quartz
-#수정되냐?!
 import json
 import os
 import pyperclip
