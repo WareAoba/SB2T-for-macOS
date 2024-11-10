@@ -14,6 +14,9 @@ import subprocess
 from pathlib import Path
 import threading
 
+# 코딩 할줄 전혀 몰라서 코파일럿 딸깍질만 반복했습니다
+# 실행도 잘 안됨... 손좀 봐주셈...
+
 
 cache_name="cachedIndex.json"
 appdir_path=appdirs.user_cache_dir("ParagraphManager", False)
