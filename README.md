@@ -10,7 +10,7 @@
 ...사실 전 코딩 전문지식은 커녕
 그냥 코딩할 줄도 모르고요
 
-### [늦은 밤의 하트튠 마이너 갤러리](https://gall.dcinside.com/mgallery/board/lists?id=heartune, "늦은 밤의 하트튠 마이너 갤러리")
+### [늦은 밤의 하트튠 마이너 갤러리](https://gall.dcinside.com/mgallery/board/lists?id=heartune) , "늦은 밤의 하트튠 마이너 갤러리")
 파딱 한명이랑
 파이썬 다룰 줄 아는 분이랑 같이
 작업중입니다.
