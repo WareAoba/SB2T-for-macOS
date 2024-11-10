@@ -245,12 +245,17 @@ class StatusOverlay:
     def __init__(self, root):
         self.root = root
         self.window = tk.Toplevel(root)
-        self.window.title("Paragraph Overlay")
-        
-        self.window.geometry("500x300+0+0")
+        self.window.overrideredirect(True)
+        # self.window.title("Paragraph Overlay")
+
+
+        self.window.geometry("400x250+0+0")
         self.window.attributes("-topmost", True)
+
+        #오버레이 반투명
+        self.window.attributes("-alpha", 0.8)
+
         # self.window.overrideredirect(False)
-        # self.window.overrideredirect(True)
         
         # Configure grid layout with three rows and one column
         self.window.rowconfigure(0, weight=1)
@@ -267,7 +272,18 @@ class StatusOverlay:
         self.next_label = tk.Label(self.window, text="", font=("Helvetica", 14), wraplength=480, anchor="w")
         self.next_label.grid(row=2, column=0, sticky="nsew", padx=10, pady=5)
 
+        #오버레이 이동
+        self.window.bind("<Button-1>", self.start_move)
+        self.window.bind("<B1-Motion>", self.do_move)
 
+    def start_move(self, event):
+        self._x = event.x
+        self._y = event.y
+
+    def do_move(self, event):
+        x = self.window.winfo_x() + (event.x - self._x)
+        y = self.window.winfo_y() + (event.y - self._y)
+        self.window.geometry(f"+{x}+{y}")
 
     def update_paragraph_text(self, prev_text, current_text, next_text):
         maxCharPerline=50
@@ -325,7 +341,12 @@ class Application(tk.Tk):
             }
         self.configure(bg=self.style['bg'])
 
+
     def create_widgets(self):
+
+        # In create_widgets()
+
+
         self.file_button = tk.Button(self, text="Load File", command=self.load_file)
         self.file_button.pack(pady=10)
 
