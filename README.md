@@ -36,7 +36,7 @@
 일단 **VSCode**로 불러오신 뒤
 파이썬 디버거로 실행시켜주셔야 합니다.
 
-**Main Quartzpy**가 원래 파일이고요,
+**Main Quartz.py**가 원래 파일이고요,
 
 SwiftAlt 브런치 내 **Main_Quartz.py** 파일은
 프론트엔드 / 백엔드 이원화 실험중인 파일입니다.
