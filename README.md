@@ -3,14 +3,14 @@
 =============
 
 
-[식붕이툴](https://github.com/JOWONRO/SB2Tool , "SB2Tool")이 윈도우에서밖에 안 된다는 점이
+[식붕이툴](https://github.com/JOWONRO/SB2Tool,"SB2Tool")이 윈도우에서밖에 안 된다는 점이
 너무나 한이 맺혀
 직접 개발해보려고 합니다.
 
 ...사실 전 코딩 전문지식은 커녕
 그냥 코딩할 줄도 모르고요
 
-[늦은밤의하트튠 마이너갤러리](https://gall.dcinside.com/mgallery/board/lists?id=heartune , "늦은 밤의 하트튠 마이너 갤러리")
+[늦은밤의하트튠 마이너갤러리](https://gall.dcinside.com/mgallery/board/lists?id=heartune,"늦은 밤의 하트튠 마이너 갤러리")
 파딱 한명이랑
 파이썬 다룰 줄 아는 분이랑 같이
 작업중입니다.
