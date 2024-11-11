@@ -1,0 +1,62 @@
+{
+  "name": "paragraph-manager-frontend",
+  "version": "1.0.0",
+  "private": true,
+  "main": "main.js",
+  "dependencies": {
+    "axios": "^0.21.1",
+    "react": "^17.0.0",
+    "react-dom": "^17.0.0",
+    "react-scripts": "4.0.3"
+  },
+  "devDependencies": {
+    "concurrently": "^7.6.0",
+    "cross-env": "^7.0.3",
+    "electron": "^23.1.0",
+    "electron-builder": "^25.1.8",
+    "wait-on": "^8.0.1"
+  },
+  "scripts": {
+    "start": "cross-env NODE_OPTIONS=--openssl-legacy-provider react-scripts start",
+    "build": "cross-env NODE_OPTIONS=--openssl-legacy-provider react-scripts build",
+    "backend": "python3 ../backend/Main.py",
+    "start-all": "concurrently \"npm run backend\" \"npm run start\"",
+    "electron": "concurrently \"npm run backend\" \"wait-on http://localhost:3000 && electron .\"",
+    "dist": "cross-env NODE_OPTIONS=--openssl-legacy-provider npm run build && electron-builder build --mac"
+  },
+  "build": {
+    "appId": "com.example.paragraphmanager",
+    "mac": {
+      "category": "public.app-category.productivity"
+    },
+    "files": [
+      "build/**/*",
+      "main.js",
+      "preload.js",
+      "package.json",
+      "node_modules/**/*"
+    ],
+    "directories": {
+      "buildResources": "assets"
+    },
+    "extraResources": [
+      {
+        "from": "build/",
+        "to": "build/",
+        "filter": ["**/*"]
+      }
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
