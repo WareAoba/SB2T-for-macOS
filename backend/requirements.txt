@@ -1,0 +1,4 @@
+Flask
+pyperclip
+pynput
+appdirs
