@@ -30,6 +30,7 @@ class ClipboardMonitor {
             CFRunLoopAddSource(CFRunLoopGetCurrent(), source, .commonModes)
             CGEvent.tapEnable(tap: tap, enable: true)
         }
+        print("ClipboardMonitor 시작됨")
     }
     
     deinit {
@@ -71,6 +72,10 @@ enum MessageType: String {
     case success = "SUCCESS"
     case fail = "FAIL"
     case info = "INFO"
+    case copyNextParagraph = "COPY_NEXT_PARAGRAPH"
+    case copyPrevParagraph = "COPY_PREV_PARAGRAPH"
+    case copyStopParagraph = "COPY_STOP_PARAGRAPH"
+    case copyResumeParagraph = "COPY_RESUME_PARAGRAPH"
 }
 
 class ParagraphManager {
@@ -79,28 +84,57 @@ class ParagraphManager {
     var currentIndex: Int = 0
     private var monitor: ClipboardMonitor?
     
-    private let inputPipe = FileHandle(forReadingAtPath: "/tmp/python_to_swift")
-    private let outputPipe = FileHandle(forWritingAtPath: "/tmp/swift_to_python")
+    private var inputPipe: FileHandle?
+    private var outputPipe: FileHandle?
     
     func start() {
+        // 파이프 파일이 생성될 때까지 대기
+        waitForPipes()
+        
+        // 파이프 초기화
+        guard let inputFH = FileHandle(forReadingAtPath: "/tmp/python_to_swift"),
+              let outputFH = FileHandle(forWritingAtPath: "/tmp/swift_to_python") else {
+            handleError(NSError(domain: "ParagraphManager", code: 2, userInfo: [NSLocalizedDescriptionKey: "파이프 파일을 열 수 없습니다"]))
+            return
+        }
+        inputPipe = inputFH
+        outputPipe = outputFH
+        print("파이프 초기화 완료")
+        
         do {
             monitor = ClipboardMonitor()
             try monitor?.startMonitoring()
             sendMessage(.info, "Swift monitor started successfully")
+            print("Swift 모니터링 시작")
         } catch {
             handleError(error)
+            print("모니터링 시작 중 오류 발생: \(error)")
         }
         readFromPython()
     }
-    
+
     private func readFromPython() {
         DispatchQueue.global().async {
+            print("Python으로부터의 메시지 수신 대기 중...")
             while true {
-                if let data = self.inputPipe?.availableData,
+                if let data = self.inputPipe?.availableData, !data.isEmpty,
                    let command = String(data: data, encoding: .utf8) {
-                    self.handleCommand(command)
+                    print("Python으로부터 명령 수신: \(command)")
+                    self.handleCommand(command.trimmingCharacters(in: .newlines))
+                } else {
+                    Thread.sleep(forTimeInterval: 0.1)
                 }
             }
+        }
+    }
+    
+    private func waitForPipes() {
+        let inputPipePath = "/tmp/python_to_swift"
+        let outputPipePath = "/tmp/swift_to_python"
+        let fileManager = FileManager.default
+        while !(fileManager.fileExists(atPath: inputPipePath) && fileManager.fileExists(atPath: outputPipePath)) {
+            print("파이프 파일이 생성될 때까지 대기 중...")
+            Thread.sleep(forTimeInterval: 0.1)
         }
     }
     
@@ -114,6 +148,7 @@ class ParagraphManager {
             default:
                 break
         }
+        print("명령 처리 완료: \(command)")
     }
     
     func notifyPythonProcess(success: Bool) {
@@ -122,18 +157,27 @@ class ParagraphManager {
         } else {
             sendMessage(.fail, "Clipboard mismatch")
         }
+        print("Python 프로세스에 결과 전송: \(success)")
     }
     
     func sendMessage(_ type: MessageType, _ content: String) {
-        let message = "\(type.rawValue):\(content)"
-        outputPipe?.write(message.data(using: .utf8)!)
+        let message = "\(type.rawValue):\(content)\n"
+        if let data = message.data(using: .utf8) {
+            outputPipe?.write(data)
+            print("Python으로 메시지 전송: \(message)")
+        } else {
+            print("메시지 인코딩 실패: \(message)")
+        }
     }
     
     func handleError(_ error: Error) {
         sendMessage(.error, error.localizedDescription)
+        print("에러 처리: \(error.localizedDescription)")
     }
 }
 
+print("ParagraphManager 시작")
 let manager = ParagraphManager.shared
 manager.start()
+print("RunLoop 시작")
 RunLoop.main.run()
