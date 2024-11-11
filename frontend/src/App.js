@@ -10,33 +10,47 @@ function App() {
   });
   const [filePath, setFilePath] = useState('');
 
-  const loadFile = () => {
-    axios.post('http://localhost:5000/load_file', {
-      file_path: filePath
-    }).then(response => {
-      if (response.data.success) {
-        fetchParagraphs();
-      } else {
-        alert('파일 로드 실패');
-      }
-    });
+  const loadFile = async () => {
+    const filePaths = await window.electron.openFile();
+    if (filePaths.length > 0) {
+      setFilePath(filePaths[0]);
+      axios.post('http://localhost:5001/load_file', {
+        file_path: filePaths[0]
+      }).then(response => {
+        if (response.data.success) {
+          fetchParagraphs();
+        } else {
+          alert('파일 로드 실패');
+        }
+      }).catch(error => {
+        console.error('파일 로드 중 오류 발생:', error);
+      });
+    }
   };
 
   const fetchParagraphs = () => {
-    axios.get('http://localhost:5000/get_paragraphs')
+    axios.get('http://localhost:5001/get_paragraphs')
       .then(response => {
         setParagraphs(response.data);
+      }).catch(error => {
+        console.error('단락 가져오기 중 오류 발생:', error);
       });
   };
 
   const nextParagraph = () => {
-    axios.post('http://localhost:5000/next_paragraph')
-      .then(() => fetchParagraphs());
+    axios.post('http://localhost:5001/next_paragraph')
+      .then(() => fetchParagraphs())
+      .catch(error => {
+        console.error('다음 단락으로 이동 중 오류 발생:', error);
+      });
   };
 
   const prevParagraph = () => {
-    axios.post('http://localhost:5000/prev_paragraph')
-      .then(() => fetchParagraphs());
+    axios.post('http://localhost:5001/prev_paragraph')
+      .then(() => fetchParagraphs())
+      .catch(error => {
+        console.error('이전 단락으로 이동 중 오류 발생:', error);
+      });
   };
 
   useEffect(() => {
@@ -47,13 +61,6 @@ function App() {
     <div style={{ padding: '20px' }}>
       <h1>Paragraph Manager</h1>
       <div>
-        <input 
-          type="text" 
-          value={filePath} 
-          onChange={(e) => setFilePath(e.target.value)} 
-          placeholder="파일 경로를 입력하세요"
-          style={{ width: '300px' }}
-        />
         <button onClick={loadFile}>파일 로드</button>
       </div>
       <div style={{ marginTop: '20px' }}>

@@ -198,6 +198,7 @@ app = Flask(__name__)
 def load_file():
     data = request.get_json()
     file_path = data.get('file_path')
+    print(f"파일 경로 수신: {file_path}")  # 파일 경로 로그 출력
     success = clipboard_manager.load_file(file_path)
     return jsonify({'success': success})
 
