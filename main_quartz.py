@@ -15,12 +15,18 @@ from pathlib import Path
 import threading
 import stat
 
+<<<<<<< HEAD
 class Application(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("SB2T")
         self.geometry("500x300")
         print("GUI 초기화 시작")
+=======
+# 코딩 할줄 전혀 몰라서 코파일럿 딸깍질만 반복했습니다
+# 실행도 잘 안됨... 손좀 봐주셈...
+
+>>>>>>> b4a17954dc6a2021ca1125b172b45a06d9dacc2a
 
         # GUI 요소 생성
         self.create_widgets()
