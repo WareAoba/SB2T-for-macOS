@@ -21,7 +21,7 @@
     "build": "cross-env NODE_OPTIONS=--openssl-legacy-provider react-scripts build",
     "backend": "python3 ../backend/Main.py",
     "start-all": "concurrently \"npm run backend\" \"npm run start\"",
-    "electron": "concurrently \"npm run backend\" \"wait-on http://localhost:3000 && electron .\"",
+    "electron": "electron .",
     "dist": "cross-env NODE_OPTIONS=--openssl-legacy-provider npm run build && electron-builder build --mac"
   },
   "build": {
