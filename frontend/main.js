@@ -1,8 +1,13 @@
+// main.js
+
 const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const path = require('path');
+const isDev = require('electron-is-dev');
 
-function createWindow () {
-  const win = new BrowserWindow({
+let mainWindow;
+
+function createMainWindow() {
+  mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
     webPreferences: {
@@ -13,22 +18,42 @@ function createWindow () {
     }
   });
 
-  win.loadURL('http://localhost:3000'); // React 개발 서버 주소
+  const startUrl = isDev
+    ? 'http://localhost:3000'
+    : `file://${path.join(__dirname, '../build/index.html')}`;
+
+  console.log(`Loading URL: ${startUrl}`);
+  mainWindow.loadURL(startUrl);
+
+  mainWindow.on('closed', () => {
+    mainWindow = null;
+  });
+
+  mainWindow.webContents.on('did-fail-load', () => {
+    console.error('Failed to load URL:', startUrl);
+  });
+
+  mainWindow.webContents.on('did-finish-load', () => {
+    console.log('Successfully loaded URL:', startUrl);
+  });
+
+  mainWindow.webContents.openDevTools();
 }
 
-app.whenReady().then(() => {
-  createWindow();
+app.on('ready', createMainWindow);
 
-  app.on('activate', function () {
-    if (BrowserWindow.getAllWindows().length === 0) createWindow();
-  });
+app.on('window-all-closed', () => {
+  if (process.platform !== 'darwin') {
+    app.quit();
+  }
 });
 
-app.on('window-all-closed', function () {
-  if (process.platform !== 'darwin') app.quit();
+app.on('activate', () => {
+  if (BrowserWindow.getAllWindows().length === 0) {
+    createMainWindow();
+  }
 });
 
-// 파일 다이얼로그를 열기 위한 IPC 핸들러
 ipcMain.handle('dialog:openFile', async () => {
   const result = await dialog.showOpenDialog({
     properties: ['openFile'],

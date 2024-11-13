@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Overlay from './Overlay';
+import './App.css';
 
 function App() {
   const [paragraphs, setParagraphs] = useState({
