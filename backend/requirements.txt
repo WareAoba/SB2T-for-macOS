@@ -2,3 +2,4 @@ Flask
 pyperclip
 pynput
 appdirs
+flask_cors

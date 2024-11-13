@@ -4,6 +4,7 @@ import os
 import pyperclip
 from pynput import keyboard
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 from datetime import datetime, timedelta
 from functools import wraps
 import time
@@ -193,6 +194,10 @@ class ClipboardManager:
 clipboard_manager = ClipboardManager()
 
 app = Flask(__name__)
+
+## CORS 관련 설정 추가
+## 이거 없으면 안되지 않음??
+CORS(app, resources={r'*': {'origins': 'http://localhost:3000'}})
 
 @app.route('/load_file', methods=['POST'])
 def load_file():
